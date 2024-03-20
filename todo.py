@@ -7,7 +7,10 @@ import task
 ##  X Finish button functionality to add a new task
 ##  - Implement a button to save unchecked tasks to a file
 ##  - Implement loading in tasks from file (or db?)
+##  - Implement recurring tasks
+##  - implement task highlighting for overdue or completed tasks
 ##  - Implement button to clear tasks
+##  - Implement task importance?
 
 # Class definition for the frame that holds the checkboxes
 class CheckboxFrame(customtkinter.CTkFrame):
@@ -89,9 +92,7 @@ class App(customtkinter.CTk):
 
 if __name__ == "__main__":
     # Create a dummy list of tasks; replace with a file read-in for task persistence
-    tasks = [task.task("Eat"),
-             task.task("Sleep"),
-             task.task("Repeat")]
+    tasks = []
     
     app=App(tasks)
     app.mainloop()
