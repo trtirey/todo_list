@@ -1,4 +1,5 @@
 import customtkinter
+from datetime import date
 import task
 
 ##
@@ -22,7 +23,10 @@ class CheckboxFrame(customtkinter.CTkFrame):
         self.title = customtkinter.CTkLabel(self, text=self.title, fg_color="gray30", corner_radius=6)
         self.title.grid(row=0, column=0, padx=10, pady=(10, 0), sticky="ew")
 
-        # Create the checkbox for each item in self.values; assumes each will be a task object
+        self.update_frame()
+
+    # Update the checkboxes; Create the checkbox for each item in self.values; assumes each will be a task object
+    def update_frame(self):
         for i, task in enumerate(self.values):
             checkbox = customtkinter.CTkCheckBox(self, text=task.title)
             checkbox.grid(row=i+1, column=0, padx=10, pady=(10,0), sticky="w")
@@ -36,6 +40,10 @@ class CheckboxFrame(customtkinter.CTkFrame):
                 checked_checkboxes.append(checkbox.cget("text"))
         return checked_checkboxes
 
+    # Add a task to the frame
+    def add_task(self, title, due=date.today()):
+        self.values.append(task.task(title, due))
+        self.update_frame()
 
 # Class definition for the application; instantiating calls for a list of tasks
 class App(customtkinter.CTk):
@@ -60,7 +68,8 @@ class App(customtkinter.CTk):
     # Defines a function for the action of the button; needs finishing
     def button_event(self):
         dialog = customtkinter.CTkInputDialog(text="Enter Task", title="Create Task")
-        print(dialog.get_input())
+        self.checkbox_frame.add_task(dialog.get_input())
+        #print(dialog.get_input())
         #return task.task(dialog.get_input())
         #print("checkbox_frame_1:", self.checkbox_frame.get_checked())
 
@@ -70,5 +79,6 @@ if __name__ == "__main__":
     tasks = [task.task("Eat"),
              task.task("Sleep"),
              task.task("Repeat")]
+    
     app=App(tasks)
     app.mainloop()
