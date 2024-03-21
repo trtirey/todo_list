@@ -1,5 +1,6 @@
 import customtkinter
 from datetime import date
+import json
 import task
 
 ##
@@ -20,7 +21,7 @@ class CheckboxFrame(customtkinter.CTkFrame):
         # Set the column to fill all the space it has available
         self.grid_columnconfigure(0, weight=1)
         self.title = title
-        self.values = values
+        self.values = values    # values is a list of task objects
         self.checkboxes = []
 
         # Create the title label for the frame
@@ -88,11 +89,32 @@ class App(customtkinter.CTk):
 
     # Defines a function for the Save Tasks button
     def save_tasks_event(self):
-        print("Saving Tasks")
+        # Create a list of dictionaries, each representing a task
+        tasks = []
+        for task in self.checkbox_frame.values:
+            tasks.append(task.dict())
+        # Write the list of task dicts to  json file
+        with open("tasks.json", "w") as write_file:
+            json.dump(tasks, write_file)
+        #print("Saving Tasks")
 
 if __name__ == "__main__":
-    # Create a dummy list of tasks; replace with a file read-in for task persistence
+    # Load tasks in from file
     tasks = []
+    # Try loading tasks from file; if the file doesn't exist, create an empty list
+    try:
+        with open("tasks.json", "r") as read_file:
+            # Try to load file; if the file is empty, create an empty list
+            try:
+                raw_tasks = json.load(read_file)
+            except:
+                raw_tasks = []
+    except:
+        raw_tasks = []
+    #print(raw_tasks)
+    # Create a list by parsing each dictionary as a task object
+    for obj in raw_tasks:
+        tasks.append(task.task(obj['Title'], date.fromisoformat(obj['Deadline'])))
     
     app=App(tasks)
     app.mainloop()
