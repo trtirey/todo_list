@@ -6,8 +6,10 @@ import task
 ##
 ## To Do
 ##  X Finish button functionality to add a new task
-##  - Implement a button to save unchecked tasks to a file
-##  - Implement loading in tasks from file (or db?)
+##  X Implement a button to save unchecked tasks to a file
+##  X Implement loading in tasks from file (or db?)
+##  - Clean up saving and loading; create a seperate function for loading from file
+##  - Create a github repo
 ##  - Implement recurring tasks
 ##  - implement task highlighting for overdue or completed tasks
 ##  - Implement button to clear tasks
@@ -98,12 +100,18 @@ class App(customtkinter.CTk):
             json.dump(tasks, write_file)
         #print("Saving Tasks")
 
-if __name__ == "__main__":
+
+##
+##
+##
+
+          
+def load_tasks_from_file(json_file):
     # Load tasks in from file
     tasks = []
     # Try loading tasks from file; if the file doesn't exist, create an empty list
     try:
-        with open("tasks.json", "r") as read_file:
+        with open(json_file, "r") as read_file:
             # Try to load file; if the file is empty, create an empty list
             try:
                 raw_tasks = json.load(read_file)
@@ -115,6 +123,16 @@ if __name__ == "__main__":
     # Create a list by parsing each dictionary as a task object
     for obj in raw_tasks:
         tasks.append(task.task(obj['Title'], date.fromisoformat(obj['Deadline'])))
+    return tasks
+
+
+###
+###
+###
+
+
+if __name__ == "__main__":
+    tasks = load_tasks_from_file("tasks.json")
     
     app=App(tasks)
     app.mainloop()
