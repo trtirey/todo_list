@@ -8,12 +8,16 @@ import task
 ##  X Finish button functionality to add a new task
 ##  X Implement a button to save unchecked tasks to a file
 ##  X Implement loading in tasks from file (or db?)
-##  - Clean up saving and loading; create a seperate function for loading from file
-##  - Create a github repo
+##  X Clean up saving and loading; create a seperate function for loading from file
+##  X Create a github repo
 ##  - Implement recurring tasks
-##  - implement task highlighting for overdue or completed tasks
+##      - By seperate file?
+##  - Implement task highlighting for completed tasks (and overdue?)
 ##  - Implement button to clear tasks
 ##  - Implement task importance?
+##  - Implement a button to load tasks
+##  - Re-arrange layout placing buttons in their own frame to right
+##  - Add task deadlines to interface?
 
 # Class definition for the frame that holds the checkboxes
 class CheckboxFrame(customtkinter.CTkFrame):
@@ -87,6 +91,9 @@ class App(customtkinter.CTk):
 
     # Defines a funtion for the Clear Tasks button
     def clear_tasks_event(self):
+        self.checkbox_frame = CheckboxFrame(self, "Tasks", values=[])
+        self.checkbox_frame.grid(row=1, column=0, padx=10, pady=(0,20), sticky="nesw")
+        self.checkbox_frame.configure(fg_color="transparent")
         print("Clearing Tasks")
 
     # Defines a function for the Save Tasks button
@@ -98,14 +105,13 @@ class App(customtkinter.CTk):
         # Write the list of task dicts to  json file
         with open("tasks.json", "w") as write_file:
             json.dump(tasks, write_file)
-        #print("Saving Tasks")
 
 
 ##
 ##
 ##
 
-          
+
 def load_tasks_from_file(json_file):
     # Load tasks in from file
     tasks = []
@@ -119,7 +125,6 @@ def load_tasks_from_file(json_file):
                 raw_tasks = []
     except:
         raw_tasks = []
-    #print(raw_tasks)
     # Create a list by parsing each dictionary as a task object
     for obj in raw_tasks:
         tasks.append(task.task(obj['Title'], date.fromisoformat(obj['Deadline'])))
