@@ -12,11 +12,13 @@ import task
 ##  X Create a github repo
 ##  - Implement recurring tasks
 ##      - By seperate file?
-##  - Implement task highlighting for completed tasks (and overdue?)
+##  - Implement task "highlighting" for completed tasks (and overdue?)
 ##  X Implement button to clear tasks
 ##  - Implement task importance?
+##  - Implement task importance in task creation
+##  - Add task importance to interface, possibly as a fill color?
 ##  X Implement a button to load tasks
-##  - Re-arrange layout placing buttons in their own frame to right
+##  ? Re-arrange layout placing buttons in their own frame to right
 ##  - Add task deadlines to interface?
 
 # Class definition for the frame that holds the checkboxes
@@ -159,7 +161,7 @@ class App(customtkinter.CTk):
             raw_tasks = []
         # Create a list by parsing each dictionary as a task object
         for obj in raw_tasks:
-            tasks.append(task.task(obj['Title'], date.fromisoformat(obj['Deadline'])))
+            tasks.append(task.task(obj['Title'], date.fromisoformat(obj['Deadline']), obj['Importance']))
         self.checkbox_frame.values=tasks
         self.checkbox_frame.update_frame()
 
@@ -194,7 +196,7 @@ def load_tasks_from_file(json_file):
         raw_tasks = []
     # Create a list by parsing each dictionary as a task object
     for obj in raw_tasks:
-        tasks.append(task.task(obj['Title'], date.fromisoformat(obj['Deadline'])))
+        tasks.append(task.task(obj['Title'], date.fromisoformat(obj['Deadline']), obj['Importance'])) #, obj['Importance']
     return tasks
 
 
