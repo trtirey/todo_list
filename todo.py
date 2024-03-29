@@ -13,9 +13,9 @@ import task
 ##  - Implement recurring tasks
 ##      - By seperate file?
 ##  - Implement task highlighting for completed tasks (and overdue?)
-##  - Implement button to clear tasks
+##  X Implement button to clear tasks
 ##  - Implement task importance?
-##  - Implement a button to load tasks
+##  X Implement a button to load tasks
 ##  - Re-arrange layout placing buttons in their own frame to right
 ##  - Add task deadlines to interface?
 
@@ -56,6 +56,45 @@ class CheckboxFrame(customtkinter.CTkFrame):
         self.values.append(task.task(title, due))
         self.update_frame()
 
+
+# class ButtonFrame(customtkinter.CTkFrame):
+#     def __init__(self, master):
+#         super().__init__(master)
+#         self.grid_columnconfigure(0, weight=1)
+#         # Create the " Add Task" button; requires additional work
+#         self.add_button = customtkinter.CTkButton(self, text="Add Task", command=self.add_task_event)
+#         self.add_button.grid(row=0, column=0, padx=10, pady=20, sticky="ew")
+#         # Create button to clear completed tasks
+#         self.clear_button = customtkinter.CTkButton(self, text="Clear Tasks", command=self.clear_tasks_event)
+#         self.clear_button.grid(row=1, column=0, padx=10, pady=(0,20), sticky="ew")
+#         # Create a button to save current tasks
+#         self.save_button = customtkinter.CTkButton(self, text="Save Tasks", command=self.save_tasks_event)
+#         self.save_button.grid(row=2, column=0, padx=10, pady=(0,20), sticky="ew")
+    
+#     # Defines a function for the Add Task button
+#     def add_task_event(self, master):
+#         dialog = customtkinter.CTkInputDialog(text="Enter Task", title="Create Task")
+#         master.checkbox_frame.add_task(dialog.get_input())
+
+#     # Defines a funtion for the Clear Tasks button
+#     def clear_tasks_event(self, master):
+#         master.checkbox_frame = CheckboxFrame(self, "Tasks", values=[])
+#         master.checkbox_frame.grid(row=1, column=0, padx=10, pady=(0,20), sticky="nesw")
+#         master.checkbox_frame.configure(fg_color="transparent")
+#         print("Clearing Tasks")
+
+#     # Defines a function for the Save Tasks button
+#     def save_tasks_event(self, master):
+#         # Create a list of dictionaries, each representing a task
+#         tasks = []
+#         for task in master.checkbox_frame.values:
+#             tasks.append(task.dict())
+#         # Write the list of task dicts to  json file
+#         with open("tasks.json", "w") as write_file:
+#             json.dump(tasks, write_file)
+
+
+
 # Class definition for the application; instantiating calls for a list of tasks
 class App(customtkinter.CTk):
     def __init__(self, tasks):
@@ -75,13 +114,22 @@ class App(customtkinter.CTk):
         self.checkbox_frame.grid(row=1, column=0, padx=10, pady=(0,20), sticky="nesw")
         self.checkbox_frame.configure(fg_color="transparent")
 
+        #
+        # self.button_frame = ButtonFrame(master=self)
+        # self.button_frame.grid(row=1, column=1, padx=10, pady=20, sticky="nesw")
+        # self.button_frame.configure(fg_color="transparent")
+
         # Create button to clear completed tasks
         self.button = customtkinter.CTkButton(self, text="Clear Tasks", command=self.clear_tasks_event)
         self.button.grid(row=2, column=0, padx=10, pady=(0,20), sticky="ew")
 
+        # Create a button to load tasks
+        self.button = customtkinter.CTkButton(self, text="Load Tasks", command=self.load_tasks_event)
+        self.button.grid(row=3, column=0, padx=10, pady=(0,20), sticky="ew")
+
         # Create a button to save current tasks
         self.button = customtkinter.CTkButton(self, text="Save Tasks", command=self.save_tasks_event)
-        self.button.grid(row=3, column=0, padx=10, pady=(0,20), sticky="ew")
+        self.button.grid(row=4, column=0, padx=10, pady=(0,20), sticky="ew")
         
 
     # Defines a function for the Add Task button
@@ -95,6 +143,25 @@ class App(customtkinter.CTk):
         self.checkbox_frame.grid(row=1, column=0, padx=10, pady=(0,20), sticky="nesw")
         self.checkbox_frame.configure(fg_color="transparent")
         print("Clearing Tasks")
+
+    def load_tasks_event(self, json_file="tasks.json"):
+        # Load tasks in from file
+        tasks = []
+        # Try loading tasks from file; if the file doesn't exist, create an empty list
+        try:
+            with open(json_file, "r") as read_file:
+                # Try to load file; if the file is empty, create an empty list
+                try:
+                    raw_tasks = json.load(read_file)
+                except:
+                    raw_tasks = []
+        except:
+            raw_tasks = []
+        # Create a list by parsing each dictionary as a task object
+        for obj in raw_tasks:
+            tasks.append(task.task(obj['Title'], date.fromisoformat(obj['Deadline'])))
+        self.checkbox_frame.values=tasks
+        self.checkbox_frame.update_frame()
 
     # Defines a function for the Save Tasks button
     def save_tasks_event(self):
